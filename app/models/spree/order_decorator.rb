@@ -2,11 +2,8 @@ Spree::Order.class_eval do
   attr_accessible :store_credit_amount, :remove_store_credits
   attr_accessor :store_credit_amount, :remove_store_credits
 
-  # the check for user? below is to ensure we don't break the
-  # admin app when creating a new order from the admin console
-  # In that case, we create an order before assigning a user
-  before_save :process_store_credit, :if => "self.user.present? && @store_credit_amount"
   after_save :ensure_sufficient_credit, :if => "self.user.present? && !self.completed?"
+  has_one :order_credit, :class_name => "Spree::OrderCredit"
 
   validates_with StoreCreditMinimumValidator
 
@@ -39,29 +36,14 @@ Spree::Order.class_eval do
 
   private
 
-  # credit or update store credit adjustment to correct value if amount specified
-  #
-  def process_store_credit
-    @store_credit_amount = BigDecimal.new(@store_credit_amount.to_s).round(2)
-
-    # store credit can't be greater than order total (not including existing credit), or the user's available credit
-    @store_credit_amount = [@store_credit_amount, user.store_credits_total, (total + store_credit_amount.abs)].min
-
-    if @store_credit_amount <= 0
-      adjustments.store_credits.destroy_all
-    else
-      if sca = adjustments.store_credits.first
-        sca.update_attributes({:amount => -(@store_credit_amount)})
-      else
-        # create adjustment off association to prevent reload
-        sca = adjustments.store_credits.create(:label => I18n.t(:store_credit) , :amount => -(@store_credit_amount))
-      end
+  # create store credit record
+  def process_store_credit!
+    if self.user.present?
+      self.order_credit || self.create_order_credit
     end
-
-    # recalc totals and ensure payment is set to new amount
-    update_totals
-    pending_payments.first.amount = total if pending_payments.first
+    true
   end
+  state_machine.after_transition :to => :payment,  :do => :process_store_credit!
 
   def consume_users_credit
     return unless completed? and user.present?
@@ -90,7 +72,6 @@ Spree::Order.class_eval do
     if user.store_credits_total < store_credit_amount
       # user's credit does not cover all adjustments.
       adjustments.store_credits.destroy_all
-
       update!
     end
   end
