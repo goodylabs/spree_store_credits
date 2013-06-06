@@ -1,6 +1,7 @@
 class Spree::OrderCredit < ActiveRecord::Base
   belongs_to :order, :class_name => "Spree::Order"
   after_create :create_credit_adjustment
+  has_many :usages, :class_name => "Spree::OrderCreditUsage"
 
   def update_adjustment(adjustment, source)
     adjustment.update_attribute_without_callbacks :amount, adjustment_amount
