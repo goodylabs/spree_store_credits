@@ -20,14 +20,17 @@ class Spree::OrderCredit < ActiveRecord::Base
   end
 
   def create_credit_adjustment
+    amount = adjustment_amount
 
-    # create adjustment off association to prevent reload
-    order.adjustments.store_credits.create({
-      :source => order,
-      :originator => self,
-      :label => I18n.t(:store_credit),
-      :amount => adjustment_amount
-    }, :without_protection => true)
+    if amount < 0 # credits are negative
+      # create adjustment off association to prevent reload
+      order.adjustments.store_credits.create({
+        :source => order,
+        :originator => self,
+        :label => I18n.t(:store_credit),
+        :amount => amount
+      }, :without_protection => true)
+    end
 
     true
   end
