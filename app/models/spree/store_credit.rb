@@ -1,5 +1,7 @@
 class Spree::StoreCredit < ActiveRecord::Base
-  attr_accessible :user_id, :amount, :reason, :remaining_amount
+  default_scope where("expiration_date IS NULL OR expiration_date > NOW()").order("expiration_date DESC")
+
+  attr_accessible :user_id, :amount, :reason, :remaining_amount, :expiration_date
 
   validates :amount, :presence => true, :numericality => true
   validates :reason, :presence => true
