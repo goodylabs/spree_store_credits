@@ -9,8 +9,8 @@ class Spree::OrderCredit < ActiveRecord::Base
       adj.update_attribute(:amount, amount)
 
     elsif amount < 0 # credits are negative
-      # create adjustment off association to prevent reload
-      order.adjustments.store_credits.create({
+      Spree::Adjustment.create({
+        :adjustable => order,
         :source => order,
         :originator => self,
         :label => I18n.t(:store_credit),
