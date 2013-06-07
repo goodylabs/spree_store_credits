@@ -12,4 +12,21 @@ class Spree::StoreCredit < ActiveRecord::Base
     belongs_to :user
     attr_accessible :amount, :remaining_amount, :reason, :user_id
   end
+
+  def used?
+    remaining_amount <= 0
+  end
+
+  def expired?
+    expiration_date.past?
+  end
+
+  def unavailable?
+    used? || expired?
+  end
+
+  def available?
+    !unavailable?
+  end
+
 end
