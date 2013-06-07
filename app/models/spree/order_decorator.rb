@@ -38,8 +38,8 @@ Spree::Order.class_eval do
 
   # create store credit record
   def process_store_credit!
-    if self.user.present?
-      self.order_credit || self.create_order_credit
+    if user.present?
+      (order_credit || create_order_credit).create_or_update_credit_adjustment
     end
     true
   end
