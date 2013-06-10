@@ -6,3 +6,7 @@
   <%= f.label :reason, t("reason")%><br />
   <%= f.text_field :reason %>
 <% end %>
+<%= f.field_container :expiration_date do %>
+  <%= f.label :expiration_date, t("expiration date")%><br />
+  <%= f.datetime_select :expiration_date, include_blank: true %>
+<% end %>
