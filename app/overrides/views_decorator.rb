@@ -1,8 +1,7 @@
-Deface::Override.new(
-  :virtual_path => "spree/admin/shared/_configuration_menu",
-  :name => "store_credits_admin_configurations_menu",
-  :insert_bottom => "[data-hook='admin_configurations_sidebar_menu']",
-  :text => "<%= configurations_sidebar_menu_item t(:store_credits), admin_store_credits_url %>",
+Deface::Override.new(:virtual_path => "spree/layouts/admin",
+  :name => "store_credits_admin_tabs",
+  :insert_bottom => "[data-hook='admin_tabs'], #admin_tabs[data-hook]",
+  :text => "<%= tab(:store_credits, :url => spree.admin_store_credits_path, :icon => 'icon-user') %>",
   :disabled => false)
 
 Deface::Override.new(
