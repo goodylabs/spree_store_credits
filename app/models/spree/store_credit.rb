@@ -20,7 +20,7 @@ class Spree::StoreCredit < ActiveRecord::Base
   end
 
   def expired?
-    expiration_date.past?
+    expiration_date.try(:past?)
   end
 
   def unavailable?
