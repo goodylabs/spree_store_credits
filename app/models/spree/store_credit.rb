@@ -1,5 +1,5 @@
 class Spree::StoreCredit < ActiveRecord::Base
-  default_scope where("expiration_date IS NULL OR expiration_date > NOW()").order("expiration_date")
+  scope :available, where("(expiration_date IS NULL OR expiration_date > NOW()) AND amount > 0").order("expiration_date")
 
   attr_accessible :user_id, :amount, :reason, :remaining_amount, :expiration_date, :email, :issued_on
 

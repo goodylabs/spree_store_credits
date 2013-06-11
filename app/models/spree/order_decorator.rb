@@ -51,27 +51,23 @@ Spree::Order.class_eval do
     if credit_used > 0
       order_credit = self.order_credit || self.create_order_credit
 
-      user.store_credits.each do |store_credit|
-        if store_credit.remaining_amount > 0
+      user.store_credits.available.each do |store_credit|
+        if store_credit.remaining_amount > credit_used # Credit covers the rest of it
+          order_credit.usages.create(
+            :credit => store_credit,
+            :amount => credit_used
+          )
+          store_credit.remaining_amount -= credit_used
+          store_credit.save
+          break
+        else # Credit doesn't cover the whole amount
+          credit_used -= store_credit.remaining_amount
+          order_credit.usages.create(
+            :credit => store_credit,
+            :amount => store_credit.remaining_amount
+          )
 
-          if store_credit.remaining_amount > credit_used # Credit covers the rest of it
-            order_credit.usages.create(
-              :credit => store_credit,
-              :amount => credit_used
-            )
-            store_credit.remaining_amount -= credit_used
-            store_credit.save
-            break
-          else # Credit doesn't cover the whole amount
-            credit_used -= store_credit.remaining_amount
-            order_credit.usages.create(
-              :credit => store_credit,
-              :amount => store_credit.remaining_amount
-            )
-
-            store_credit.update_attribute(:remaining_amount, 0)
-          end
-
+          store_credit.update_attribute(:remaining_amount, 0)
         end
       end
     end
