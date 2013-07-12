@@ -14,7 +14,7 @@ if Spree.user_class
 
     protected
     def apply_pending_credits
-      Spree::StoreCredit.where(:email => email, :issued_on => nil).each do |credit|
+      Spree::StoreCredit.where(:email => email).each do |credit|
         credit.user = self
         credit.issued_on = DateTime.now
         credit.save
