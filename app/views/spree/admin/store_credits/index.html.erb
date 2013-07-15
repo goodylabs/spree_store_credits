@@ -10,8 +10,8 @@
     <tr>
       <th><%= t("user") %></th>
       <th><%= t("amount") %></th>
-      <th><%= t("remaining_amount") %></th>
       <th><%= t("reason") %></th>
+      <th><%= t("description") %></th>
       <th><%= t("expiration date") %></th>
     </tr>
   </thead>
@@ -26,9 +26,9 @@
           <% end %>
         </td>
         <td><%= number_to_currency store_credit.amount %></td>
-        <td><%= number_to_currency store_credit.remaining_amount %></td>
         <td><%= store_credit.reason %></td>
-        <td><%= store_credit.expiration_date %></td>
+        <td><%= store_credit.description %></td>
+        <td><%= store_credit.expiration_date.try(:strftime, '%-m/%-d/%Y') %></td>
         <td class="actions">
           <% if store_credit.remaining_amount > 0 %>
             <% if store_credit.amount == store_credit.remaining_amount %>
