@@ -49,7 +49,7 @@ module Spree
     end
 
     def collection
-      super.page(params[:page])
+      super.available.page(params[:page])
     end
   end
 end
