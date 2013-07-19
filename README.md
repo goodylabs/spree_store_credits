@@ -1,28 +1,40 @@
-Spree Store Credits
-===================
+SpreeStoreCredits
+=================
 
-[![Build
-Status](https://secure.travis-ci.org/spree/spree_store_credits.png)](http://travis-ci.org/spree/spree_store_credits)
-
-
-This Spree extension allows admins to issue arbitrary amounts of store credit to users.
-
-Users can redeem store credit during checkout, as part or full payment for an order.
-
-Also extends My Account page to display outstanding credit balance, and orders that used store credit.
+Introduction goes here.
 
 Installation
-============
+------------
 
-1. Add the following to your applications Gemfile
+Add spree_store_credits to your Gemfile:
 
-    gem 'spree_store_credits'
+```ruby
+gem 'spree_store_credits'
+```
 
-2. Run bundler
+Bundle your dependencies and run the installation generator:
 
-    bundle install
+```shell
+bundle
+bundle exec rails g spree_store_credits:install
+```
 
-3. Copy and execute migrations:
+Testing
+-------
 
-    rails g spree_store_credits:install
+Be sure to bundle your dependencies and then create a dummy test app for the specs to run against.
 
+```shell
+bundle
+bundle exec rake test_app
+bundle exec rspec spec
+```
+
+When testing your applications integration with this extension you may use it's factories.
+Simply add this require statement to your spec_helper:
+
+```ruby
+require 'spree_store_credits/factories'
+```
+
+Copyright (c) 2013 [name of extension creator], released under the New BSD License
