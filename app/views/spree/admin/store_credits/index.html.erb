@@ -1,6 +1,6 @@
-<h1 class="page-title "> <%= t("listing_store_credits") %></h1><br>
+<h1 class="page-title "> <%= Spree.t("listing_store_credits") %></h1><br>
 
-<%= link_to_with_icon('add', t('add_store_credit'), new_admin_store_credit_url) %>
+<%= link_to_with_icon('add', Spree.t('add_store_credit'), new_admin_store_credit_url) %>
 
 <br>
 <br>
@@ -8,11 +8,11 @@
 <table class="index">
   <thead>
     <tr>
-      <th><%= t("user") %></th>
-      <th><%= t("amount") %></th>
-      <th><%= t("reason") %></th>
-      <th><%= t("description") %></th>
-      <th><%= t("expiration date") %></th>
+      <th><%= Spree.t("user") %></th>
+      <th><%= Spree.t("amount") %></th>
+      <th><%= Spree.t("reason") %></th>
+      <th><%= Spree.t("description") %></th>
+      <th><%= Spree.t("expiration date") %></th>
     </tr>
   </thead>
   <tbody>
@@ -34,16 +34,16 @@
             <% if store_credit.amount == store_credit.remaining_amount %>
               <%= link_to_edit store_credit, :no_text => true %> &nbsp;
             <% else %>
-              <%= t(:was_partially_used) %>
+              <%= Spree.t(:was_partially_used) %>
             <% end %>
             <%= link_to_delete store_credit, :no_text => true %>
           <% else %>
-            <%= t(:was_fully_used) %>
+            <%= Spree.t(:was_fully_used) %>
           <% end %>
       </tr>
     <% end %>
     <% if @store_credits.empty? %>
-      <tr><td colspan="4"><%= t(:none) %></td></tr>
+      <tr><td colspan="4"><%= Spree.t(:none) %></td></tr>
     <% end %>
   </tbody>
 </table>

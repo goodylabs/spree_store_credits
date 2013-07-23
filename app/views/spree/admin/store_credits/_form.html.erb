@@ -1,16 +1,16 @@
 <%= f.field_container :amount do %>
-  <%= f.label :amount, t("amount")%><br />
+  <%= f.label :amount, Spree.t("amount")%><br />
   <%= f.text_field :amount %>
 <% end %>
 <%= f.field_container :reason do %>
-  <%= f.label :reason, t("reason")%><br />
+  <%= f.label :reason, Spree.t("reason")%><br />
   <%= f.text_field :reason %>
 <% end %>
 <%= f.field_container :description do %>
-  <%= f.label :description, t("description")%><br />
+  <%= f.label :description, Spree.t("description")%><br />
   <%= f.text_area :description %>
 <% end %>
 <%= f.field_container :expiration_date do %>
-  <%= f.label :expiration_date, t("expiration date")%><br />
+  <%= f.label :expiration_date, Spree.t("expiration date")%><br />
   <%= f.datetime_select :expiration_date, include_blank: true %>
 <% end %>
