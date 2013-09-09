@@ -37,56 +37,64 @@ unless Spree::Order.method_defined?(:process_payments_with_credits!)
       end
     end
 
+
+    def apply_store_credits(user_amount)
+      process_store_credit!(user_amount)
+    end
+
     private
 
-    # create store credit record
-    def process_store_credit!
-      if user.present?
-        (order_credit || create_order_credit).create_or_update_credit_adjustment
+      # create store credit record
+      def process_store_credit!(user_amount)
+        if user.present?
+          logger.debug "- process_store_credit - "
+          (order_credit || create_order_credit).create_or_update_credit_adjustment (user_amount)
+        end
+        true
       end
-      true
-    end
-    state_machine.after_transition :to => :payment,  :do => :process_store_credit!
 
-    def consume_users_credit
-      return unless completed? and user.present?
-      credit_used = self.store_credit_amount
-      if credit_used > 0
-        order_credit = self.order_credit || self.create_order_credit
+      # state_machine.after_transition :to => :payment,  :do => :process_store_credit!
 
-        user.store_credits.available.each do |store_credit|
-          if store_credit.remaining_amount > credit_used # Credit covers the rest of it
-            order_credit.usages.create(
-              :credit => store_credit,
-              :amount => credit_used
-            )
-            store_credit.remaining_amount -= credit_used
-            store_credit.save
-            break
-          else # Credit doesn't cover the whole amount
-            credit_used -= store_credit.remaining_amount
-            order_credit.usages.create(
-              :credit => store_credit,
-              :amount => store_credit.remaining_amount
-            )
+      def consume_users_credit
+        return unless completed? and user.present?
+        credit_used = self.store_credit_amount
+        if credit_used > 0
+          order_credit = self.order_credit || self.create_order_credit
 
-            store_credit.update_attribute(:remaining_amount, 0)
+          user.store_credits.available.each do |store_credit|
+            if store_credit.remaining_amount > credit_used # Credit covers the rest of it
+              order_credit.usages.create(
+                :credit => store_credit,
+                :amount => credit_used
+              )
+              store_credit.remaining_amount -= credit_used
+              store_credit.save
+              break
+            else # Credit doesn't cover the whole amount
+              credit_used -= store_credit.remaining_amount
+              order_credit.usages.create(
+                :credit => store_credit,
+                :amount => store_credit.remaining_amount
+              )
+
+              store_credit.update_attribute(:remaining_amount, 0)
+            end
           end
         end
       end
-    end
-    # consume users store credit once the order has completed.
-    state_machine.after_transition :to => :complete,  :do => :consume_users_credit
 
-    # ensure that user has sufficient credits to cover adjustments
-    #
-    def ensure_sufficient_credit
-      if user.store_credits_total < store_credit_amount
-        # user's credit does not cover all adjustments.
-        adjustments.store_credits.destroy_all
-        update!
+      # consume users store credit once the order has completed.
+      state_machine.after_transition :to => :complete,  :do => :consume_users_credit
+
+      # ensure that user has sufficient credits to cover adjustments
+      #
+      def ensure_sufficient_credit
+        if user.store_credits_total < store_credit_amount
+          # user's credit does not cover all adjustments.
+          adjustments.store_credits.destroy_all
+          update!
+        end
       end
-    end
 
   end
 end
