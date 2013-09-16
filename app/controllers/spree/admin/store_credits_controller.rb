@@ -32,6 +32,13 @@ module Spree
 
       else
         # Add credit to single user
+        
+        # Fix for missing field in a form
+        if params[:store_credit][:email].blank?
+          user_id = params[:store_credit][:user_id]
+          params[:store_credit][:email] = Spree::User.find(user_id).email
+        end
+
         super
       end
     end
